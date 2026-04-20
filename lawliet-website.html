@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>霄淩.Lawliet — 跨域效能架構師</title>
+  <meta name="description" content="霄淩.Lawliet｜HR 實戰 × AI 效能 × 音樂藝術。企業 AI 導入顧問、IMAGE STUDIO 創辦人、AICN 共同創辦人。"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8f9ff;
+      --white: #ffffff;
+      --surface: #f1f4ff;
+      --border: #e4e9f7;
+      --purple: #6d28d9;
+      --purple-mid: #7c3aed;
+      --purple-light: #8b5cf6;
+      --purple-pale: #ede9fe;
+      --coral: #e11d48;
+      --coral-pale: #fff0f3;
+      --teal: #0891b2;
+      --teal-pale: #e0f7fa;
+      --gold: #d97706;
+      --gold-pale: #fffbeb;
+      --green: #059669;
+      --text: #0f172a;
+      --text-mid: #334155;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.04);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,.12), 0 4px 12px rgba(0,0,0,.06);
+      --shadow-xl: 0 24px 60px rgba(0,0,0,.14);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+    ::selection { background: var(--purple-pale); color: var(--purple); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--purple-light); border-radius: 3px; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes floatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes gradShift { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    @keyframes pulse { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .7; transform: scale(.96); } }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 56px; height: 64px;
+      background: rgba(255,255,255,0.88);
+      backdrop-filter: blur(20px) saturate(180%);
+      border-bottom: 1px solid rgba(228,233,247,0.8);
+      box-shadow: 0 1px 16px rgba(109,40,217,0.06);
+      transition: background .3s;
+    }
+    .nav-logo {
+      font-size: 16px; font-weight: 800; letter-spacing: -.4px; text-decoration: none;
+      background: linear-gradient(130deg, var(--purple) 0%, var(--coral) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { color: var(--text-muted); font-size: 13.5px; font-weight: 500; text-decoration: none; transition: color .2s; }
+    .nav-links a:hover { color: var(--purple); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      color: #fff; font-size: 13.5px; font-weight: 600;
+      padding: 9px 22px; border-radius: 10px; text-decoration: none;
+      box-shadow: 0 4px 14px rgba(109,40,217,0.28); transition: all .2s;
+    }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(109,40,217,0.38); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh; display: flex; align-items: center;
+      padding: 100px 56px 80px; position: relative; overflow: hidden;
+    }
+    .hero-bg-img {
+      position: absolute; inset: 0; z-index: 0;
+      background:
+        linear-gradient(135deg, rgba(109,40,217,0.07) 0%, rgba(225,29,72,0.05) 50%, rgba(8,145,178,0.06) 100%),
+        url('https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1400&q=80&fit=crop') center/cover no-repeat;
+      filter: brightness(0.96) saturate(1.1);
+    }
+    .hero-bg-img::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to right, rgba(248,249,255,0.97) 45%, rgba(248,249,255,0.6) 70%, rgba(248,249,255,0.2) 100%);
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 680px; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--purple-pale); border: 1px solid rgba(109,40,217,.2);
+      color: var(--purple); font-size: 12px; font-weight: 700;
+      padding: 5px 14px; border-radius: 20px; letter-spacing: .6px;
+      text-transform: uppercase; margin-bottom: 22px;
+      animation: fadeUp .6s ease forwards;
+    }
+    .hero-eyebrow span { width: 6px; height: 6px; border-radius: 50%; background: var(--purple); display: inline-block; animation: pulse 2s infinite; }
+    .hero-h1 {
+      font-size: clamp(38px, 5.5vw, 66px); font-weight: 900;
+      letter-spacing: -2.5px; line-height: 1.06; margin-bottom: 20px;
+      animation: fadeUp .65s .1s ease both;
+    }
+    .hero-h1 .grad {
+      background: linear-gradient(130deg, var(--purple) 0%, var(--coral) 55%, var(--gold) 100%);
+      background-size: 200% 200%;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: gradShift 5s ease infinite;
+    }
+    .hero-sub {
+      font-size: 17px; color: var(--text-muted); line-height: 1.85;
+      max-width: 500px; margin-bottom: 36px; font-weight: 400;
+      animation: fadeUp .65s .2s ease both;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 52px; animation: fadeUp .65s .3s ease both; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      color: #fff; font-size: 14px; font-weight: 600; padding: 13px 28px;
+      border-radius: 11px; text-decoration: none;
+      box-shadow: 0 4px 18px rgba(109,40,217,.32); transition: all .2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(109,40,217,.42); }
+    .btn-outline {
+      border: 1.5px solid var(--border); background: var(--white);
+      color: var(--text-mid); font-size: 14px; font-weight: 600;
+      padding: 12px 26px; border-radius: 11px; text-decoration: none;
+      box-shadow: var(--shadow-sm); transition: all .2s;
+    }
+    .btn-outline:hover { border-color: var(--purple-light); color: var(--purple); }
+    .hero-stats {
+      display: flex; gap: 40px; padding-top: 28px;
+      border-top: 1px solid var(--border);
+      animation: fadeUp .65s .4s ease both;
+    }
+    .hstat-num { font-size: 28px; font-weight: 800; color: var(--text); letter-spacing: -1px; }
+    .hstat-num span { font-size: 16px; color: var(--purple); margin-left: 2px; }
+    .hstat-label { font-size: 12px; color: var(--text-light); margin-top: 3px; }
+
+    /* ── SECTION GENERIC ── */
+    .sec { padding: 96px 0; }
+    .sec-inner { max-width: 1100px; margin: 0 auto; padding: 0 56px; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 11px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--purple); margin-bottom: 14px;
+    }
+    .eyebrow::before { content: ''; width: 20px; height: 2.5px; background: var(--purple); border-radius: 2px; }
+    h2.sec-title { font-size: clamp(28px, 3.2vw, 42px); font-weight: 800; letter-spacing: -1.2px; line-height: 1.12; margin-bottom: 14px; }
+    p.sec-desc { font-size: 15.5px; color: var(--text-muted); line-height: 1.85; max-width: 520px; }
+    hr.sep { border: none; border-top: 1px solid var(--border); margin: 0 56px; }
+
+    /* ── IDENTITY ── */
+    #identity { background: var(--white); }
+    .id-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+    .id-img-wrap {
+      position: relative; border-radius: 24px; overflow: hidden;
+      box-shadow: var(--shadow-xl); aspect-ratio: 4/5;
+    }
+    .id-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .id-img-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(109,40,217,0.7) 100%);
+    }
+    .id-img-badge {
+      position: absolute; bottom: 24px; left: 24px; right: 24px;
+      background: rgba(255,255,255,0.95); backdrop-filter: blur(12px);
+      border-radius: 14px; padding: 16px 18px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    }
+    .id-img-badge .name { font-size: 16px; font-weight: 800; color: var(--text); }
+    .id-img-badge .role {
+      font-size: 12px; color: var(--text-muted); margin-top: 3px;
+    }
+    .id-img-badge .tags { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+    .id-img-badge .tag {
+      font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px;
+    }
+    .tag-purple { background: var(--purple-pale); color: var(--purple); }
+    .tag-coral { background: var(--coral-pale); color: var(--coral); }
+    .tag-teal { background: var(--teal-pale); color: var(--teal); }
+    .tag-gold { background: var(--gold-pale); color: var(--gold); }
+    .id-text .tagline { font-size: 34px; font-weight: 800; letter-spacing: -1.2px; line-height: 1.18; margin-bottom: 20px; }
+    .id-text p { font-size: 15px; color: var(--text-muted); line-height: 1.9; margin-bottom: 14px; }
+    .id-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+    .chip {
+      font-size: 12.5px; font-weight: 600; padding: 6px 14px;
+      border-radius: 22px; border: 1.5px solid; cursor: default; transition: all .2s;
+    }
+    .chip:hover { transform: translateY(-1px); }
+
+    /* ── SERVICES ── */
+    #services { background: var(--bg); }
+    .services-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 48px; }
+    .srv-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .srv-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+      box-shadow: var(--shadow-sm); transition: all .3s; cursor: default;
+    }
+    .srv-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+    .srv-img {
+      width: 100%; height: 180px; object-fit: cover; display: block;
+      background: var(--surface);
+    }
+    .srv-img-placeholder {
+      width: 100%; height: 180px; display: flex; align-items: center; justify-content: center;
+    }
+    .srv-body { padding: 24px 22px 22px; }
+    .srv-badge {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      padding: 3px 10px; border-radius: 20px; margin-bottom: 12px; letter-spacing: .3px;
+    }
+    .srv-title { font-size: 18px; font-weight: 700; margin-bottom: 9px; letter-spacing: -.3px; }
+    .srv-desc { font-size: 13.5px; color: var(--text-muted); line-height: 1.8; margin-bottom: 18px; }
+    .srv-list { list-style: none; margin-bottom: 20px; }
+    .srv-list li {
+      font-size: 13px; color: var(--text-mid); padding: 7px 0;
+      border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px;
+    }
+    .srv-list li:last-child { border: none; }
+    .srv-list li::before { content: '✓'; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .srv-link {
+      display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px;
+      font-weight: 700; text-decoration: none; transition: gap .2s;
+    }
+    .srv-link:hover { gap: 10px; }
+
+    /* ── PILLARS ── */
+    #pillars { background: var(--white); }
+    .pillars-wrap { margin-top: 52px; }
+    .pillar-row {
+      display: grid; grid-template-columns: 80px 1fr 200px 100px; gap: 0;
+      align-items: center; padding: 22px 28px; border-radius: 14px;
+      border: 1px solid var(--border); background: var(--white);
+      margin-bottom: 12px; box-shadow: var(--shadow-sm); transition: all .25s;
+    }
+    .pillar-row:hover { transform: translateX(4px); box-shadow: var(--shadow-md); }
+    .pillar-icon-wrap {
+      width: 52px; height: 52px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; font-size: 24px;
+    }
+    .pillar-info .name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+    .pillar-info .desc { font-size: 13px; color: var(--text-muted); }
+    .pillar-bar-wrap { padding: 0 20px; }
+    .pbar-bg { height: 8px; background: var(--surface); border-radius: 4px; overflow: hidden; }
+    .pbar-fill { height: 100%; border-radius: 4px; transition: width 1.2s ease; }
+    .pillar-pct-wrap { text-align: right; font-size: 22px; font-weight: 800; }
+
+    /* ── AI IMAGE GRID ── */
+    #gallery { background: var(--bg); overflow: hidden; padding: 80px 0; }
+    .gallery-header { max-width: 1100px; margin: 0 auto 40px; padding: 0 56px; }
+    .img-mosaic { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; max-width: 1100px; margin: 0 auto; padding: 0 56px; }
+    .mosaic-item { border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-md); cursor: pointer; transition: transform .3s; }
+    .mosaic-item:hover { transform: scale(1.02); }
+    .mosaic-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .mosaic-item.tall { grid-row: span 2; }
+    .mosaic-item.wide { grid-column: span 2; }
+
+    /* ── AICN ── */
+    #aicn { background: var(--white); }
+    .aicn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .aicn-img-wrap { border-radius: 22px; overflow: hidden; box-shadow: var(--shadow-xl); }
+    .aicn-img-wrap img { width: 100%; display: block; }
+    .aicn-feat { display: flex; flex-direction: column; gap: 14px; margin-top: 26px; }
+    .aicn-feat-item {
+      display: flex; gap: 14px; align-items: flex-start;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px;
+    }
+    .aicn-feat-icon {
+      width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 19px;
+    }
+    .aicn-feat-title { font-size: 13.5px; font-weight: 700; margin-bottom: 3px; }
+    .aicn-feat-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ── SOCIAL ── */
+    #social { background: var(--bg); padding: 80px 0; }
+    .social-inner { max-width: 1100px; margin: 0 auto; padding: 0 56px; text-align: center; }
+    .social-grid { display: flex; gap: 18px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
+    .soc-card {
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 18px; padding: 28px 36px; text-decoration: none;
+      display: flex; align-items: center; gap: 16px;
+      box-shadow: var(--shadow-sm); transition: all .25s; min-width: 200px;
+    }
+    .soc-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .soc-icon {
+      width: 50px; height: 50px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;
+    }
+    .soc-platform { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .soc-handle { font-size: 12px; color: var(--text-muted); }
+
+    /* ── CONTACT ── */
+    #contact {
+      padding: 96px 0;
+      background: linear-gradient(135deg, var(--purple-pale) 0%, #fce7f3 50%, var(--teal-pale) 100%);
+    }
+    .contact-inner { max-width: 680px; margin: 0 auto; padding: 0 56px; }
+    .contact-card {
+      background: var(--white); border-radius: 24px; padding: 48px;
+      box-shadow: var(--shadow-xl); text-align: left;
+    }
+    .contact-title { font-size: 30px; font-weight: 800; letter-spacing: -1px; margin-bottom: 10px; }
+    .contact-sub { font-size: 15px; color: var(--text-muted); margin-bottom: 32px; line-height: 1.75; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .fg { display: flex; flex-direction: column; gap: 6px; }
+    .fg.full { grid-column: 1/-1; }
+    .fl { font-size: 12.5px; font-weight: 600; color: var(--text-mid); }
+    .fi, .fta, .fsel {
+      background: var(--surface); border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 11px 14px; color: var(--text);
+      font-size: 13.5px; font-family: inherit; outline: none; transition: border-color .2s;
+      -webkit-appearance: none;
+    }
+    .fi:focus, .fta:focus, .fsel:focus { border-color: var(--purple-light); background: var(--white); }
+    .fta { resize: vertical; min-height: 110px; }
+    .fsub {
+      background: linear-gradient(135deg, var(--purple), var(--purple-light));
+      color: #fff; border: none; font-size: 14.5px; font-weight: 700;
+      padding: 14px 32px; border-radius: 11px; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(109,40,217,.3); transition: all .2s;
+      margin-top: 6px; grid-column: 1/-1; align-self: start; display: inline-block; width: fit-content;
+    }
+    .fsub:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(109,40,217,.4); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--text); color: rgba(255,255,255,0.6);
+      padding: 40px 56px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-brand { font-size: 14px; font-weight: 700; }
+    .footer-brand span {
+      background: linear-gradient(130deg, #a78bfa, #fb7185);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .footer-links { display: flex; gap: 22px; }
+    .footer-links a { font-size: 13px; color: rgba(255,255,255,0.5); text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: #a78bfa; }
+    .footer-copy { font-size: 12px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 960px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .sec-inner, .sep { padding: 0 24px; }
+      #hero { padding: 90px 24px 60px; }
+      .hero-bg-img::after { background: linear-gradient(to right, rgba(248,249,255,0.98) 40%, rgba(248,249,255,0.85) 100%); }
+      .id-grid, .aicn-grid { grid-template-columns: 1fr; gap: 36px; }
+      .srv-grid { grid-template-columns: 1fr; }
+      .img-mosaic { grid-template-columns: 1fr 1fr; padding: 0 24px; }
+      .pillar-row { grid-template-columns: 60px 1fr; gap: 12px; }
+      .pillar-bar-wrap, .pillar-pct-wrap { display: none; }
+      footer { flex-direction: column; gap: 16px; padding: 32px 24px; text-align: center; }
+      .contact-inner { padding: 0 24px; }
+      .contact-card { padding: 32px 24px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .social-inner { padding: 0 24px; }
+      .gallery-header { padding: 0 24px; }
+      .services-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="topnav">
+  <a href="#hero" class="nav-logo">霄淩.Lawliet</a>
+  <ul class="nav-links">
+    <li><a href="#identity">關於</a></li>
+    <li><a href="#services">服務</a></li>
+    <li><a href="#aicn">AICN</a></li>
+    <li><a href="#gallery">作品</a></li>
+    <li><a href="#social">社群</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">預約諮詢 →</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg-img"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><span></span>跨域效能架構師</div>
+    <h1 class="hero-h1">
+      邏輯走到盡頭，<br>
+      <span class="grad">就是藝術的開始。</span>
+    </h1>
+    <p class="hero-sub">HR 實戰 × AI 效能 × 音樂藝術。<br>
+    企業 AI 導入顧問・IMAGE STUDIO 創辦人・AICN 共同創辦人。<br>
+    用系統思維解構複雜，用創作感知世界。</p>
+    <div class="hero-btns">
+      <a href="#services" class="btn-primary">探索服務 →</a>
+      <a href="#social" class="btn-outline">追蹤我的內容</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hstat-num">300<span>+</span></div>
+        <div class="hstat-label">企業 AI 培訓人次</div>
+      </div>
+      <div>
+        <div class="hstat-num">95<span>%</span></div>
+        <div class="hstat-label">課程滿意度</div>
+      </div>
+      <div>
+        <div class="hstat-num">3</div>
+        <div class="hstat-label">跨域創業項目</div>
+      </div>
+      <div>
+        <div class="hstat-num">AICN</div>
+        <div class="hstat-label">AI 職涯平台共創</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- IDENTITY -->
+<section id="identity" class="sec">
+  <div class="sec-inner">
+    <div class="id-grid">
+      <div class="id-img-wrap reveal">
+        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&q=85&fit=crop" alt="AI Architect Workspace" loading="lazy"/>
+        <div class="id-img-overlay"></div>
+        <div class="id-img-badge">
+          <div class="name">霄淩.Lawliet</div>
+          <div class="role">HR × AI × 音樂・跨域效能架構師</div>
+          <div class="tags">
+            <span class="chip tag-purple">HR 顧問</span>
+            <span class="chip tag-coral">IMAGE STUDIO</span>
+            <span class="chip tag-gold">AICN 共創</span>
+            <span class="chip tag-teal">企業講師</span>
+          </div>
+        </div>
+      </div>
+      <div class="id-text reveal">
+        <div class="eyebrow">關於我</div>
+        <h2 class="sec-title">不只一種<br>定義自己的方式</h2>
+        <p>10 年以上 HR 實戰經驗，橫跨招募優化、組織行為、企業內訓。不相信 AI 會取代人，但相信「沒有 AI 技能的人」會被淘汰。</p>
+        <p>同時是 IMAGE STUDIO 音樂工作室創辦人，和 AICN AI 職涯平台的共同創辦人。用邏輯理解工作，用音樂理解人心。</p>
+        <div class="id-chips">
+          <span class="chip tag-purple">HR × AI 顧問</span>
+          <span class="chip tag-coral">音樂創作人</span>
+          <span class="chip tag-gold">AICN 共同創辦人</span>
+          <span class="chip tag-teal">企業內訓講師</span>
+          <span class="chip tag-purple">慈善參與</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- SERVICES -->
+<section id="services" class="sec">
+  <div class="sec-inner">
+    <div class="services-header reveal">
+      <div>
+        <div class="eyebrow">服務項目</div>
+        <h2 class="sec-title">三個核心模塊</h2>
+      </div>
+      <p class="sec-desc" style="max-width:340px;">每一個模塊都是完整的系統，不是零散的服務。</p>
+    </div>
+    <div class="srv-grid">
+
+      <div class="srv-card reveal">
+        <img class="srv-img" src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=600&q=80&fit=crop" alt="AI Enterprise Training" loading="lazy"/>
+        <div class="srv-body">
+          <span class="srv-badge" style="background:var(--purple-pale);color:var(--purple);">HR × AI</span>
+          <div class="srv-title">企業 AI 諮詢與內訓</div>
+          <p class="srv-desc">將 AI 工具嵌入 HR 工作流，不是取代，而是讓你的管理能力翻倍。</p>
+          <ul class="srv-list">
+            <li style="--c:var(--purple);">AI 辦公實務課程（300人・95%滿意）</li>
+            <li>招募流程自動化設計</li>
+            <li>組織效能診斷與優化</li>
+            <li>AI 工具導入策略規劃</li>
+          </ul>
+          <a href="#contact" class="srv-link" style="color:var(--purple);">預約諮詢 →</a>
+        </div>
+      </div>
+
+      <div class="srv-card reveal">
+        <img class="srv-img" src="https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&q=80&fit=crop" alt="Music Studio" loading="lazy"/>
+        <div class="srv-body">
+          <span class="srv-badge" style="background:var(--coral-pale);color:var(--coral);">IMAGE STUDIO</span>
+          <div class="srv-title">音樂創作與合作</div>
+          <p class="srv-desc">用聲音捕捉那些語言無法抵達的地方。AI 輔助 × 人類情感。</p>
+          <ul class="srv-list">
+            <li>原創音樂創作與製作</li>
+            <li>AI 輔助音樂生成實驗</li>
+            <li>音樂合作邀約</li>
+            <li>幕後製作紀錄分享</li>
+          </ul>
+          <a href="https://www.youtube.com/@imagestudio9570" target="_blank" class="srv-link" style="color:var(--coral);">前往頻道 →</a>
+        </div>
+      </div>
+
+      <div class="srv-card reveal">
+        <img class="srv-img" src="https://images.unsplash.com/photo-1676299081847-824916de030a?w=600&q=80&fit=crop" alt="AICN AI Career Platform" loading="lazy"/>
+        <div class="srv-body">
+          <span class="srv-badge" style="background:var(--teal-pale);color:var(--teal);">AICN</span>
+          <div class="srv-title">AICN AI 職涯平台</div>
+          <p class="srv-desc">給下一代求職者的 AI 武器庫。讓你在面試前，就已經贏了一半。</p>
+          <ul class="srv-list">
+            <li>AI 模擬面試（3題定生死）</li>
+            <li>履歷健檢與優化建議</li>
+            <li>3D 職場情緒降壓室</li>
+            <li>N-Coin 職涯貨幣系統</li>
+          </ul>
+          <a href="https://aicncareer.com" target="_blank" class="srv-link" style="color:var(--teal);">體驗 AICN →</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- PILLARS -->
+<section id="pillars" class="sec">
+  <div class="sec-inner">
+    <div class="reveal">
+      <div class="eyebrow">內容策略</div>
+      <h2 class="sec-title">四大內容支柱</h2>
+      <p class="sec-desc">每一篇內容都有策略，每一個觀點都有溯源。</p>
+    </div>
+    <div class="pillars-wrap">
+      <div class="pillar-row reveal">
+        <div class="pillar-icon-wrap" style="background:#eff6ff;"><span style="font-size:24px;">🧩</span></div>
+        <div class="pillar-info">
+          <div class="name" style="color:#2563eb;">HR 實戰</div>
+          <div class="desc">職場管理・招募優化・組織行為・企業內訓現場第一線</div>
+        </div>
+        <div class="pillar-bar-wrap">
+          <div class="pbar-bg"><div class="pbar-fill" style="width:35%;background:linear-gradient(90deg,#3b82f6,#60a5fa);"></div></div>
+        </div>
+        <div class="pillar-pct-wrap" style="color:#3b82f6;">35%</div>
+      </div>
+      <div class="pillar-row reveal">
+        <div class="pillar-icon-wrap" style="background:#f5f0ff;"><span style="font-size:24px;">🤖</span></div>
+        <div class="pillar-info">
+          <div class="name" style="color:var(--purple);">AI 應用</div>
+          <div class="desc">工作流自動化・工具開箱・AICN 平台・生活 AI 化</div>
+        </div>
+        <div class="pillar-bar-wrap">
+          <div class="pbar-bg"><div class="pbar-fill" style="width:30%;background:linear-gradient(90deg,var(--purple),var(--purple-light));"></div></div>
+        </div>
+        <div class="pillar-pct-wrap" style="color:var(--purple);">30%</div>
+      </div>
+      <div class="pillar-row reveal">
+        <div class="pillar-icon-wrap" style="background:#fff0f3;"><span style="font-size:24px;">🎵</span></div>
+        <div class="pillar-info">
+          <div class="name" style="color:var(--coral);">音樂藝術</div>
+          <div class="desc">IMAGE STUDIO 幕後・新歌發布・AI 輔助創作邏輯</div>
+        </div>
+        <div class="pillar-bar-wrap">
+          <div class="pbar-bg"><div class="pbar-fill" style="width:20%;background:linear-gradient(90deg,var(--coral),#fb7185);"></div></div>
+        </div>
+        <div class="pillar-pct-wrap" style="color:var(--coral);">20%</div>
+      </div>
+      <div class="pillar-row reveal">
+        <div class="pillar-icon-wrap" style="background:#fffbeb;"><span style="font-size:24px;">🌐</span></div>
+        <div class="pillar-info">
+          <div class="name" style="color:var(--gold);">跨域日常</div>
+          <div class="desc">企業內訓講師・慈善工作・AICN 創業日記・進修記錄</div>
+        </div>
+        <div class="pillar-bar-wrap">
+          <div class="pbar-bg"><div class="pbar-fill" style="width:15%;background:linear-gradient(90deg,var(--gold),#fbbf24);"></div></div>
+        </div>
+        <div class="pillar-pct-wrap" style="color:var(--gold);">15%</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- AI IMAGE GALLERY -->
+<section id="gallery">
+  <div class="gallery-header reveal">
+    <div class="eyebrow">作品集</div>
+    <h2 class="sec-title">IMAGE STUDIO × AI 創作</h2>
+    <p class="sec-desc">音樂幕後、AI 生成藝術、跨域活動現場——我的世界長這樣。</p>
+  </div>
+  <div class="img-mosaic">
+    <div class="mosaic-item tall reveal">
+      <img src="https://images.unsplash.com/photo-1598653222000-6b7b7a552625?w=400&q=80&fit=crop&h=500" alt="Music Studio" loading="lazy"/>
+    </div>
+    <div class="mosaic-item reveal">
+      <img src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=400&q=80&fit=crop&h=220" alt="AI Technology" loading="lazy"/>
+    </div>
+    <div class="mosaic-item reveal">
+      <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&q=80&fit=crop&h=220" alt="Workshop" loading="lazy"/>
+    </div>
+    <div class="mosaic-item tall reveal">
+      <img src="https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=400&q=80&fit=crop&h=500" alt="Abstract AI Art" loading="lazy"/>
+    </div>
+    <div class="mosaic-item wide reveal">
+      <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800&q=80&fit=crop&h=220" alt="Digital Art" loading="lazy"/>
+    </div>
+  </div>
+</section>
+
+<hr class="sep" style="margin-top:80px;">
+
+<!-- AICN -->
+<section id="aicn" class="sec">
+  <div class="sec-inner">
+    <div class="aicn-grid">
+      <div class="reveal">
+        <span class="chip tag-gold" style="font-size:12px;margin-bottom:16px;display:inline-block;">🚀 新創項目</span>
+        <div class="eyebrow">AICN</div>
+        <h2 class="sec-title">下一代的<br>求職武器庫</h2>
+        <p style="font-size:15px;color:var(--text-muted);line-height:1.9;margin-bottom:4px;">AICN 是專為大學生和應屆畢業生設計的 AI 職涯平台。我們不教你如何「應付」面試，我們讓你在進場前就建立真正的競爭力。</p>
+        <div class="aicn-feat">
+          <div class="aicn-feat-item">
+            <div class="aicn-feat-icon" style="background:#fff7ed;">🎭</div>
+            <div><div class="aicn-feat-title">AI 模擬面試</div><div class="aicn-feat-desc">3 題定生死。真實壓力測試，即時 AI 回饋，讓恐懼變成準備。</div></div>
+          </div>
+          <div class="aicn-feat-item">
+            <div class="aicn-feat-icon" style="background:#eff6ff;">📄</div>
+            <div><div class="aicn-feat-title">履歷健檢</div><div class="aicn-feat-desc">AI 掃描你的履歷弱點，給出結構性改寫建議。</div></div>
+          </div>
+          <div class="aicn-feat-item">
+            <div class="aicn-feat-icon" style="background:#f0fdf4;">🧘</div>
+            <div><div class="aicn-feat-title">3D 職場情緒降壓室</div><div class="aicn-feat-desc">面試前焦慮到不行？進來這裡先呼吸一下。</div></div>
+          </div>
+        </div>
+        <a href="https://aicncareer.com" target="_blank" class="btn-primary" style="display:inline-block;margin-top:24px;">體驗 AICN →</a>
+      </div>
+      <div class="aicn-img-wrap reveal">
+        <img src="https://images.unsplash.com/photo-1684369175833-4b445ad6bfb5?w=600&q=85&fit=crop" alt="AICN AI Career Platform" loading="lazy"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="sep">
+
+<!-- SOCIAL -->
+<section id="social">
+  <div class="social-inner">
+    <div class="reveal">
+      <div class="eyebrow" style="justify-content:center;">追蹤我</div>
+      <h2 class="sec-title" style="text-align:center;font-size:32px;margin-bottom:10px;">每天分享 HR、AI、音樂的第一線觀點</h2>
+      <p style="color:var(--text-muted);font-size:15px;text-align:center;">不濾鏡，不廢話。只有真實的思考過程。</p>
+    </div>
+    <div class="social-grid">
+      <a href="https://www.threads.net/@lawliet_huang" target="_blank" class="soc-card reveal" style="border-color:rgba(109,40,217,0.15);">
+        <div class="soc-icon" style="background:var(--purple-pale);">🧵</div>
+        <div><div class="soc-platform" style="color:var(--purple);">Threads</div><div class="soc-handle">@lawliet_huang</div></div>
+      </a>
+      <a href="https://www.linkedin.com/in/lawliet-huang" target="_blank" class="soc-card reveal" style="border-color:rgba(8,145,178,0.15);">
+        <div class="soc-icon" style="background:var(--teal-pale);">💼</div>
+        <div><div class="soc-platform" style="color:var(--teal);">LinkedIn</div><div class="soc-handle">Lawliet Huang</div></div>
+      </a>
+      <a href="https://www.youtube.com/@imagestudio9570" target="_blank" class="soc-card reveal" style="border-color:rgba(225,29,72,0.15);">
+        <div class="soc-icon" style="background:var(--coral-pale);">🎵</div>
+        <div><div class="soc-platform" style="color:var(--coral);">IMAGE STUDIO</div><div class="soc-handle">映象磁帶</div></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="contact-card reveal">
+      <div class="eyebrow">聯絡我</div>
+      <div class="contact-title">讓我們談談<br>你的需求</div>
+      <p class="contact-sub">企業內訓、顧問合作、音樂合作，或只是想交流——我都想聽。</p>
+      <form class="form-grid" onsubmit="handleSubmit(event)">
+        <div class="fg"><label class="fl">姓名 *</label><input class="fi" type="text" placeholder="王小明" required/></div>
+        <div class="fg"><label class="fl">Email *</label><input class="fi" type="email" placeholder="hello@company.com" required/></div>
+        <div class="fg full">
+          <label class="fl">洽詢類型</label>
+          <select class="fsel">
+            <option value="">請選擇</option>
+            <option>企業 AI 內訓課程</option>
+            <option>HR × AI 顧問合作</option>
+            <option>音樂合作（IMAGE STUDIO）</option>
+            <option>AICN 企業合作</option>
+            <option>媒體採訪 / 演講邀約</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div class="fg full"><label class="fl">說說你的需求</label><textarea class="fta" placeholder="簡單描述你的狀況或想法..."></textarea></div>
+        <button type="submit" class="fsub">送出詢問 →</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand"><span>霄淩.Lawliet</span> · 跨域效能架構師</div>
+  <div class="footer-copy">© 2026 Lawliet Huang. All rights reserved.</div>
+  <div class="footer-links">
+    <a href="https://aicncareer.com" target="_blank">AICN</a>
+    <a href="https://www.youtube.com/@imagestudio9570" target="_blank">IMAGE STUDIO</a>
+    <a href="mailto:ianhuang.tw@gmail.com">Email</a>
+  </div>
+</footer>
+
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.fsub');
+    btn.textContent = '✓ 已送出！我會盡快回覆';
+    btn.style.background = 'linear-gradient(135deg,#059669,#10b981)';
+    btn.disabled = true;
+  }
+
+  window.addEventListener('scroll', () => {
+    document.getElementById('topnav').style.boxShadow =
+      window.scrollY > 40 ? '0 2px 24px rgba(109,40,217,0.1)' : '0 1px 16px rgba(109,40,217,0.06)';
+  });
+</script>
+</body>
+</html>
