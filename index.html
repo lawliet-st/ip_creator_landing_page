@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>霄凌.Lawliet｜AI 效能架構師 × HR 顧問 × 企業內訓講師</title>
-<meta name="description" content="霄凌 Ian Huang｜經濟部認證 AI 應用規劃師（中級）、Azure AI-900、CPEA 策略性人力資源管理師。企業 AI 導入、HR 策略顧問與企業內訓。Threads／IG @lawliet_huang。" />
+<meta name="description" content="霄凌 Lawliet Huang｜經濟部認證 AI 應用規劃師（中級）、Azure AI-900、CPEA 策略性人力資源管理師。企業 AI 導入、HR 策略顧問與企業內訓。Threads／IG @lawliet_huang。" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@500;700;900&display=swap" rel="stylesheet" />
@@ -132,6 +132,17 @@ nav.scrolled{border-bottom-color:var(--line)}
 .soc p{color:var(--ink2);font-size:15.5px}
 .soc .pts{display:flex;flex-wrap:wrap;gap:8px}
 .soc .btn{align-self:flex-start}
+.brand-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:48px}
+.brand{display:flex;gap:28px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:32px;box-shadow:var(--shadow)}
+.brand-logo{width:128px;height:auto;flex:none;border-radius:20px}
+.brand-logo.note{height:128px;display:grid;place-items:center;background:linear-gradient(135deg,#1c1c22,#3a3a46);color:var(--gold2,#d9b46a)}
+.brand-logo.note svg{width:56px;height:56px}
+.brand-body{display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.brand-tag{font-size:13px;color:var(--gold);font-weight:600;letter-spacing:.08em}
+.brand h3{font-family:var(--serif);font-size:22px;margin:0}
+.brand p{font-size:15px;color:var(--ink2);margin:0}
+@media(max-width:980px){.brand-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.brand{flex-direction:column;align-items:flex-start}}
 .mini-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:22px}
 .mini{display:flex;align-items:center;gap:10px;padding:12px 18px;border:1px solid var(--line);border-radius:14px;background:var(--card);font-size:14px;color:var(--ink2);transition:.2s}
 .mini:hover{border-color:var(--ink);color:var(--ink)}
@@ -173,7 +184,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
   <div class="wrap nav-in">
     <a href="#top" class="logo">霄凌<span>.</span>Lawliet</a>
     <div class="menu">
-      <a href="#about">關於</a><a href="#teaching">授課經歷</a><a href="#certs">專業認證</a><a href="#services">服務</a><a href="#social">社群</a>
+      <a href="#about">關於</a><a href="#teaching">授課經歷</a><a href="#certs">專業認證</a><a href="#services">服務</a><a href="#social">社群</a><a href="#brands">品牌</a>
     </div>
     <a href="#contact" class="btn btn-dark nav-cta">邀請合作</a>
   </div>
@@ -184,7 +195,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
     <div class="rv">
       <div class="eyebrow">AI × HR × Training</div>
       <h1>讓 AI 處理重複，<br>讓人做<em>只有人能做的事</em>。</h1>
-      <p class="lead">我是霄凌（Ian Huang），一位懂 AI 的 HR。結合人資實務與 AI 工作流設計，協助企業把 AI 真正用進日常工作，也在社群上分享職場上沒人說破的事。</p>
+      <p class="lead">我是霄凌（Lawliet Huang），一位懂 AI 的 HR。結合人資實務與 AI 工作流設計，協助企業把 AI 真正用進日常工作，也在社群上分享職場上沒人說破的事。</p>
       <div class="roles" style="margin-top:26px">
         <span class="chip">AI 效能架構師</span><span class="chip">HR 策略顧問</span><span class="chip">企業內訓講師</span><span class="chip">AICN 共同創辦人</span>
       </div>
@@ -195,7 +206,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
       </div>
     </div>
     <div class="portrait rv">
-      <div class="frame"><img id="aboutPhoto" alt="霄凌 Ian Huang" /></div>
+      <div class="frame"><img id="aboutPhoto" alt="霄凌 Lawliet Huang" /></div>
       <div class="float f1"><b>4,000+</b>Threads 追蹤</div>
       <div class="float f2"><b>中級</b>經濟部 AI 應用規劃師</div>
     </div>
@@ -320,10 +331,36 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
         <a href="https://www.instagram.com/lawliet_huang/" target="_blank" rel="noopener" class="btn btn-dark">追蹤 Instagram</a>
       </div>
     </div>
-    <div class="mini-links rv">
-      <a class="mini" href="https://www.linkedin.com/in/lawliet-huang-175099314/" target="_blank" rel="noopener">in&nbsp; LinkedIn</a>
-      <a class="mini" href="https://aicncareer.com/" target="_blank" rel="noopener"><img src="aicn-logo.png" alt="" />AICN</a>
-      <a class="mini" href="https://youtube.com/@imagestudio9570" target="_blank" rel="noopener">♪&nbsp; IMAGE STUDIO</a>
+  </div>
+</section>
+
+<section class="alt" id="brands">
+  <div class="wrap">
+    <div class="rv">
+      <div class="eyebrow">Ventures</div>
+      <h2 class="title">除了 HR 與 AI，<br>我也在做這兩件事</h2>
+    </div>
+    <div class="brand-grid">
+      <div class="brand rv">
+        <img class="brand-logo" src="aicn-logo-web.png" alt="AICN 標誌" width="300" height="407" />
+        <div class="brand-body">
+          <div class="brand-tag">共同創辦人</div>
+          <h3>AICN｜AI Career Neighbor</h3>
+          <p>「你的 AI 職涯夥伴」。整合 AI 模擬面試、AI 履歷健檢、職能落差分析與勞動法規查詢，讓求職者練習更有底氣、遇到職場問題也有依據。</p>
+          <div class="pts"><span class="chip">AI 模擬面試</span><span class="chip">履歷健檢</span><span class="chip">勞動法規查詢</span></div>
+          <a href="https://aicncareer.com/" target="_blank" rel="noopener" class="btn btn-dark">認識 AICN</a>
+        </div>
+      </div>
+      <div class="brand rv">
+        <div class="brand-logo note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="16" r="2.5"/></svg></div>
+        <div class="brand-body">
+          <div class="brand-tag">創辦人・音樂創作</div>
+          <h3>IMAGE STUDIO</h3>
+          <p>我的音樂與多媒體創作工作室，專注音樂創作、聲音美學與情感表達。從寫詞、編曲到混音，把邏輯與情緒做成能被聽見的作品。</p>
+          <div class="pts"><span class="chip">音樂創作</span><span class="chip">聲音美學</span><span class="chip">翻唱與原創</span></div>
+          <a href="https://youtube.com/@imagestudio9570" target="_blank" rel="noopener" class="btn btn-dark">聽聽我的作品</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -345,7 +382,6 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
       </div>
       <div class="cta-actions">
         <a href="mailto:ianhuang.tw@gmail.com" class="btn btn-gold">寫信給我 ianhuang.tw@gmail.com</a>
-        <a href="https://www.linkedin.com/in/lawliet-huang-175099314/" target="_blank" rel="noopener" class="btn btn-ghost">LinkedIn 聯繫</a>
         <a href="https://www.threads.com/@lawliet_huang" target="_blank" rel="noopener" class="btn btn-ghost">Threads 私訊</a>
       </div>
     </div>
@@ -353,7 +389,7 @@ footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
 </section>
 
 <footer>
-  <div class="wrap"><span>© 2026 Ian Huang｜霄凌.Lawliet</span><span>AI 效能架構師・HR 顧問・企業內訓講師</span></div>
+  <div class="wrap"><span>© 2026 Lawliet Huang｜霄凌.Lawliet</span><span>AI 效能架構師・HR 顧問・企業內訓講師</span></div>
 </footer>
 
 <script src="photos-data.js"></script>
